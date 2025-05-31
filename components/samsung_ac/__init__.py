@@ -147,7 +147,7 @@ def custom_sensor_schema(
     icon: str = sensor.cv.UNDEFINED,
     accuracy_decimals: int = sensor.cv.UNDEFINED,
     device_class: str = sensor.cv.UNDEFINED,
-    state_class: str = sensor.cv.UNDEFINED,Add commentMore actions
+    state_class: str = sensor.cv.UNDEFINED
     entity_category: str = sensor.cv.UNDEFINED,
 ):
     return sensor.sensor_schema(
