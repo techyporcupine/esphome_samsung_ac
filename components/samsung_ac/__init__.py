@@ -178,6 +178,17 @@ def temperature_sensor_schema(message: int):
         raw_filters=[{"lambda": Lambda("return (int16_t)x;")}, {"multiply": 0.1}],
     )
 
+def room_temperature_schema(message: int):
+    # Message 0x4204 provides accurate temperature readings
+    # The raw value needs to be scaled by 0.1 to get the correct Celsius value
+    return custom_sensor_schema(
+        message=message,  # Option to get fed new message from schema
+        unit_of_measurement=UNIT_CELSIUS,
+        accuracy_decimals=2,  # Increased from 1 to 2 for better precision during C to F conversion
+        device_class=DEVICE_CLASS_TEMPERATURE,
+        state_class=STATE_CLASS_MEASUREMENT,
+        raw_filters=[{"multiply": 0.1}],  # Scale the raw value to get correct temperature
+    )
 
 def humidity_sensor_schema(message: int):
     return custom_sensor_schema(
@@ -204,12 +215,7 @@ DEVICE_SCHEMA = cv.Schema(
         cv.GenerateID(CONF_DEVICE_ID): cv.declare_id(Samsung_AC_Device),
         cv.Optional(CONF_CAPABILITIES): CAPABILITIES_SCHEMA,
         cv.Required(CONF_DEVICE_ADDRESS): cv.string,
-        cv.Optional(CONF_DEVICE_ROOM_TEMPERATURE): sensor.sensor_schema(
-            unit_of_measurement=UNIT_CELSIUS,
-            accuracy_decimals=1,
-            device_class=DEVICE_CLASS_TEMPERATURE,
-            state_class=STATE_CLASS_MEASUREMENT,
-        ),
+        cv.Optional(CONF_DEVICE_ROOM_TEMPERATURE): room_temperature_schema(0x4204),  # Using new schema
         cv.Optional(CONF_DEVICE_ROOM_TEMPERATURE_OFFSET): cv.float_,
         cv.Optional(CONF_DEVICE_OUTDOOR_TEMPERATURE): sensor.sensor_schema(
             unit_of_measurement=UNIT_CELSIUS,
