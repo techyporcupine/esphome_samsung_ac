@@ -167,7 +167,7 @@ def custom_sensor_schema(
         }
     )
 
-def room_temperature_schema():
+def room_temperature_schema(message: int):
     # Message 0x4204 provides accurate temperature readings
     # The raw value needs to be scaled by 0.1 to get the correct Celsius value
     return custom_sensor_schema(
