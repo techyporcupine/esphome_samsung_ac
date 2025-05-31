@@ -167,11 +167,11 @@ def custom_sensor_schema(
         }
     )
 
-def room_temperature_schema():
-    # Message 0x4204 provides accurate temperature readings
+def indoor_temperature_schema(message: int):
+    # Message should use 0x4204 format for indoor temperature sensors
     # The raw value needs to be scaled by 0.1 to get the correct Celsius value
     return custom_sensor_schema(
-        message=0x4204,  # Using correct message number for room temperature
+        message=message,  # Message number will be provided for each sensor
         unit_of_measurement=UNIT_CELSIUS,
         accuracy_decimals=2,  # Increased from 1 to 2 for better precision
         device_class=DEVICE_CLASS_TEMPERATURE,
@@ -223,18 +223,8 @@ DEVICE_SCHEMA = cv.Schema(
             device_class=DEVICE_CLASS_TEMPERATURE,
             state_class=STATE_CLASS_MEASUREMENT,
         ),
-        cv.Optional(CONF_DEVICE_INDOOR_EVA_IN_TEMPERATURE): sensor.sensor_schema(
-            unit_of_measurement=UNIT_CELSIUS,
-            accuracy_decimals=1,
-            device_class=DEVICE_CLASS_TEMPERATURE,
-            state_class=STATE_CLASS_MEASUREMENT,
-        ),
-        cv.Optional(CONF_DEVICE_INDOOR_EVA_OUT_TEMPERATURE): sensor.sensor_schema(
-            unit_of_measurement=UNIT_CELSIUS,
-            accuracy_decimals=1,
-            device_class=DEVICE_CLASS_TEMPERATURE,
-            state_class=STATE_CLASS_MEASUREMENT,
-        ),
+        cv.Optional(CONF_DEVICE_INDOOR_EVA_IN_TEMPERATURE): indoor_temperature_schema(0x4204),  # Using same message format as room temp
+        cv.Optional(CONF_DEVICE_INDOOR_EVA_OUT_TEMPERATURE): indoor_temperature_schema(0x4204),
         cv.Optional(CONF_DEVICE_ERROR_CODE): error_code_sensor_schema(0x8235),
         cv.Optional(CONF_DEVICE_TARGET_TEMPERATURE): NUMBER_SCHEMA,
         cv.Optional(CONF_DEVICE_WATER_OUTLET_TARGET): NUMBER_SCHEMA,
