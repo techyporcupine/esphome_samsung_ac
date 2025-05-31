@@ -149,6 +149,7 @@ def custom_sensor_schema(
     device_class: str = sensor.cv.UNDEFINED,
     state_class: str = sensor.cv.UNDEFINED,
     entity_category: str = sensor.cv.UNDEFINED,
+    raw_filters=[]
 ):
     return sensor.sensor_schema(
         unit_of_measurement=unit_of_measurement,
