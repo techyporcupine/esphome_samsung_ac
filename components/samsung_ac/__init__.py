@@ -167,6 +167,17 @@ def custom_sensor_schema(
         }
     )
 
+def room_temperature_schema():
+    # Message 0x4204 provides accurate temperature readings
+    # The raw value needs to be scaled by 0.1 to get the correct Celsius value
+    return custom_sensor_schema(
+        message=0x4204,  # Using correct message number for room temperature
+        unit_of_measurement=UNIT_CELSIUS,
+        accuracy_decimals=2,  # Increased from 1 to 2 for better precision
+        device_class=DEVICE_CLASS_TEMPERATURE,
+        state_class=STATE_CLASS_MEASUREMENT,
+        raw_filters=[{"multiply": 0.1}],  # Scale the raw value to get correct temperature
+    )
 
 def temperature_sensor_schema(message: int):
     return custom_sensor_schema(
@@ -204,12 +215,7 @@ DEVICE_SCHEMA = cv.Schema(
         cv.GenerateID(CONF_DEVICE_ID): cv.declare_id(Samsung_AC_Device),
         cv.Optional(CONF_CAPABILITIES): CAPABILITIES_SCHEMA,
         cv.Required(CONF_DEVICE_ADDRESS): cv.string,
-        cv.Optional(CONF_DEVICE_ROOM_TEMPERATURE): sensor.sensor_schema(
-            unit_of_measurement=UNIT_CELSIUS,
-            accuracy_decimals=1,
-            device_class=DEVICE_CLASS_TEMPERATURE,
-            state_class=STATE_CLASS_MEASUREMENT,
-        ),
+        cv.Optional(CONF_DEVICE_ROOM_TEMPERATURE): room_temperature_schema(),
         cv.Optional(CONF_DEVICE_ROOM_TEMPERATURE_OFFSET): cv.float_,
         cv.Optional(CONF_DEVICE_OUTDOOR_TEMPERATURE): sensor.sensor_schema(
             unit_of_measurement=UNIT_CELSIUS,
