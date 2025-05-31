@@ -167,6 +167,18 @@ def custom_sensor_schema(
         }
     )
 
+def room_temperature_schema():
+    # Message 0x4204 provides accurate temperature readings
+    # The raw value needs to be scaled by 0.1 to get the correct Celsius value
+    return custom_sensor_schema(
+        message=0x4204,  # Using correct message number for room temperature
+        unit_of_measurement=UNIT_CELSIUS,
+        accuracy_decimals=2,  # Increased from 1 to 2 for better precision
+        device_class=DEVICE_CLASS_TEMPERATURE,
+        state_class=STATE_CLASS_MEASUREMENT,
+        raw_filters=[{"multiply": 0.1}],  # Scale the raw value to get correct temperature
+    )
+
 def indoor_temperature_schema(message: int):
     # Message should use 0x4204 format for indoor temperature sensors
     # The raw value needs to be scaled by 0.1 to get the correct Celsius value
